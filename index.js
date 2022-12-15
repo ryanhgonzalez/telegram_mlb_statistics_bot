@@ -11,9 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const grammy_1 = require("grammy");
 const botResponseConstants_1 = require("./botResponseConstants");
-const userToken_1 = require("./userToken");
 const teamIdentifier_1 = require("./teamIdentifier");
-const bot = new grammy_1.Bot(userToken_1.UserToken.token);
+const bot = new grammy_1.Bot(process.env.CYCLIC_AUTH_TOKEN);
 const MLBStatsAPI = require('mlb-stats-api');
 const mlbStats = new MLBStatsAPI();
 // Handle the /start command.

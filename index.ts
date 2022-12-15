@@ -1,9 +1,8 @@
 import { Bot } from "grammy";
 import { BotResponseConstants } from "./botResponseConstants";
-import { UserToken } from "./userToken";
 import { Teams } from "./teamIdentifier";
 
-const bot = new Bot(UserToken.token);
+const bot = new Bot(process.env.CYCLIC_AUTH_TOKEN);
 const MLBStatsAPI = require('mlb-stats-api');
 const mlbStats = new MLBStatsAPI();
 
