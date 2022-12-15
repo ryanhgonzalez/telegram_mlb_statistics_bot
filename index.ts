@@ -35,7 +35,7 @@ bot.command("team_roster", async (ctx) => {
         message_builder.push("#" + team_roster[person].jerseyNumber + "   " + team_roster[person].position.abbreviation + "   " + team_roster[person].person.fullName);
     }
     
-    ctx.reply(message_builder.join('\n'));
+    await ctx.reply(message_builder.join('\n'));
 });
 
 // Start the server

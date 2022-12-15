@@ -40,7 +40,7 @@ bot.command("team_roster", (ctx) => __awaiter(void 0, void 0, void 0, function* 
     for (const person in team_roster) {
         message_builder.push("#" + team_roster[person].jerseyNumber + "   " + team_roster[person].position.abbreviation + "   " + team_roster[person].person.fullName);
     }
-    ctx.reply(message_builder.join('\n'));
+    yield ctx.reply(message_builder.join('\n'));
 }));
 // Start the server
 if (process.env.NODE_ENV === "production") {
