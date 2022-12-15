@@ -16,27 +16,25 @@ bot.command("about", (ctx) => ctx.reply(BotResponseConstants.aboutResponse));
 //Handle the /team_roster command. 
 bot.command("team_roster", async (ctx) => {
     const user_input = ctx.match;
-    let selected_team = 0;
-    user_input.toLowerCase();
+    const user_input_table_matcher = user_input.toLowerCase();
+    let selected_team;
 
     for (let key of Teams.keys()){
-        if (key.toLowerCase().includes(user_input)){
+        if (key.includes(user_input_table_matcher)){
             selected_team = Teams.get(key) as number;
         }
     }
 
     const response = await mlbStats.getTeamRoster({ pathParams: { teamId: selected_team }});
+
     const team_roster = response.data.roster;
-    let final_output = [];
+    let message_builder = [];
+    message_builder.push(user_input.toUpperCase() + " Team Roster:");
     for (const person in team_roster) {
-        final_output.push(team_roster[person].jerseyNumber + " " + team_roster[person].person.fullName + " " + team_roster[person].position.abbreviation + "\n");
-        final_output.push("-----------------------------\n");
-        //team_roster[person].jerseyNumber
-        //team_roster[person].person.fullName 
-        //team_roster[person].position.abbreviation
+        message_builder.push("#" + team_roster[person].jerseyNumber + "   " + team_roster[person].position.abbreviation + "   " + team_roster[person].person.fullName);
     }
     
-    ctx.reply(final_output.toString());
+    ctx.reply(message_builder.join('\n'));
 });
 
 bot.start();
