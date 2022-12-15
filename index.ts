@@ -1,8 +1,10 @@
-import { Bot } from "grammy";
+import { Bot, webhookCallback } from "grammy";
 import { BotResponseConstants } from "./botResponseConstants";
 import { Teams } from "./teamIdentifier";
+import express from "express";
 
-const bot = new Bot(process.env.CYCLIC_AUTH_TOKEN);
+
+const bot = new Bot(process.env.CYCLIC_AUTH_TOKEN as string);
 const MLBStatsAPI = require('mlb-stats-api');
 const mlbStats = new MLBStatsAPI();
 
@@ -36,4 +38,18 @@ bot.command("team_roster", async (ctx) => {
     ctx.reply(message_builder.join('\n'));
 });
 
-bot.start();
+// Start the server
+if (process.env.NODE_ENV === "production") {
+    // Use Webhooks for the production server
+    const app = express();
+    app.use(express.json());
+    app.use(webhookCallback(bot, "express"));
+  
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Bot listening on port ${PORT}`);
+    });
+  } else {
+    // Use Long Polling for development
+    bot.start();
+  }

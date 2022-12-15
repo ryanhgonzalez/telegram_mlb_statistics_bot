@@ -8,10 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const grammy_1 = require("grammy");
 const botResponseConstants_1 = require("./botResponseConstants");
 const teamIdentifier_1 = require("./teamIdentifier");
+const express_1 = __importDefault(require("express"));
 const bot = new grammy_1.Bot(process.env.CYCLIC_AUTH_TOKEN);
 const MLBStatsAPI = require('mlb-stats-api');
 const mlbStats = new MLBStatsAPI();
@@ -38,4 +42,18 @@ bot.command("team_roster", (ctx) => __awaiter(void 0, void 0, void 0, function* 
     }
     ctx.reply(message_builder.join('\n'));
 }));
-bot.start();
+// Start the server
+if (process.env.NODE_ENV === "production") {
+    // Use Webhooks for the production server
+    const app = (0, express_1.default)();
+    app.use(express_1.default.json());
+    app.use((0, grammy_1.webhookCallback)(bot, "express"));
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Bot listening on port ${PORT}`);
+    });
+}
+else {
+    // Use Long Polling for development
+    bot.start();
+}
