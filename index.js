@@ -13,9 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const grammy_1 = require("grammy");
+const dotenv_1 = __importDefault(require("dotenv"));
 const botResponseConstants_1 = require("./botResponseConstants");
 const teamIdentifier_1 = require("./teamIdentifier");
 const express_1 = __importDefault(require("express"));
+dotenv_1.default.config();
 const bot = new grammy_1.Bot(process.env.CYCLIC_AUTH_TOKEN);
 const MLBStatsAPI = require('mlb-stats-api');
 const mlbStats = new MLBStatsAPI();
@@ -33,12 +35,17 @@ bot.command("team_roster", (ctx) => __awaiter(void 0, void 0, void 0, function* 
             selected_team = teamIdentifier_1.Teams.get(key);
         }
     }
-    const response = yield mlbStats.getTeamRoster({ pathParams: { teamId: selected_team } });
-    const team_roster = response.data.roster;
     let message_builder = [];
-    message_builder.push(user_input.toUpperCase() + " Team Roster:");
-    for (const person in team_roster) {
-        message_builder.push("#" + team_roster[person].jerseyNumber + "   " + team_roster[person].position.abbreviation + "   " + team_roster[person].person.fullName);
+    try {
+        const response = yield mlbStats.getTeamRoster({ pathParams: { teamId: selected_team } });
+        const team_roster = response.data.roster;
+        message_builder.push(user_input.toUpperCase() + " Team Roster:");
+        for (const person in team_roster) {
+            message_builder.push("#" + team_roster[person].jerseyNumber + "   " + team_roster[person].position.abbreviation + "   " + team_roster[person].person.fullName);
+        }
+    }
+    catch (_a) {
+        message_builder.push("Team " + user_input + " not found.");
     }
     yield ctx.reply(message_builder.join('\n'));
 }));

@@ -1,8 +1,10 @@
 import { Bot, webhookCallback } from "grammy";
+import dotenv from "dotenv";
 import { BotResponseConstants } from "./botResponseConstants";
 import { Teams } from "./teamIdentifier";
 import express from "express";
 
+dotenv.config();
 
 const bot = new Bot(process.env.CYCLIC_AUTH_TOKEN as string);
 const MLBStatsAPI = require('mlb-stats-api');
@@ -26,15 +28,17 @@ bot.command("team_roster", async (ctx) => {
         }
     }
 
-    const response = await mlbStats.getTeamRoster({ pathParams: { teamId: selected_team }});
-
-    const team_roster = response.data.roster;
     let message_builder = [];
-    message_builder.push(user_input.toUpperCase() + " Team Roster:");
-    for (const person in team_roster) {
-        message_builder.push("#" + team_roster[person].jerseyNumber + "   " + team_roster[person].position.abbreviation + "   " + team_roster[person].person.fullName);
+    try{
+        const response = await mlbStats.getTeamRoster({ pathParams: { teamId: selected_team }});
+        const team_roster = response.data.roster;
+        message_builder.push(user_input.toUpperCase() + " Team Roster:");
+        for (const person in team_roster) {
+            message_builder.push("#" + team_roster[person].jerseyNumber + "   " + team_roster[person].position.abbreviation + "   " + team_roster[person].person.fullName);
+        }
+    } catch {
+        message_builder.push("Team " + user_input + " not found.");
     }
-    
     await ctx.reply(message_builder.join('\n'));
 });
 
