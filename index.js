@@ -5,15 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const grammy_1 = require("grammy");
 const dotenv_1 = __importDefault(require("dotenv"));
-const botConstants_1 = require("./constants/botConstants");
 const express_1 = __importDefault(require("express"));
 const teamCommands_1 = require("./teams/teamCommands");
+const genericCommands_1 = require("./generic/genericCommands");
 dotenv_1.default.config();
 const bot = new grammy_1.Bot(process.env.CYCLIC_AUTH_TOKEN);
-// Handle the /start command.
-bot.command("start", (ctx) => ctx.reply(botConstants_1.BotConstants.startResponse));
-// Handle the /about command.
-bot.command("about", (ctx) => ctx.reply(botConstants_1.BotConstants.aboutResponse));
+(0, genericCommands_1.getStartCommand)(bot);
+(0, genericCommands_1.getAboutCommand)(bot);
+(0, teamCommands_1.getTeam)(bot);
+(0, teamCommands_1.getTeamCoaches)(bot);
 (0, teamCommands_1.getTeamRoster)(bot);
 // Start the server
 if (process.env.NODE_ENV === "production") {

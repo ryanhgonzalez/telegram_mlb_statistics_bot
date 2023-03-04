@@ -1,19 +1,16 @@
 import { Bot, webhookCallback } from "grammy";
 import dotenv from "dotenv";
-import { BotConstants } from "./constants/botConstants";
 import express from "express";
-import { getTeamRoster } from "./teams/teamCommands";
+import { getTeam, getTeamCoaches, getTeamRoster } from "./teams/teamCommands";
+import { getStartCommand, getAboutCommand } from "./generic/genericCommands";
 
 dotenv.config();
 
 const bot = new Bot(process.env.CYCLIC_AUTH_TOKEN as string);
-
-// Handle the /start command.
-bot.command("start", (ctx) => ctx.reply(BotConstants.startResponse));
-
-// Handle the /about command.
-bot.command("about", (ctx) => ctx.reply(BotConstants.aboutResponse));
-
+getStartCommand(bot);
+getAboutCommand(bot);
+getTeam(bot);
+getTeamCoaches(bot);
 getTeamRoster(bot);
 
 // Start the server
